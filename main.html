@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <title>Welcome to my calculator.</title>
+</head>
+<body class="mainFrame">
+  <div class="title">
+    <strong>Simple Calculator</strong>
+  </div>
+  <div class="calculator">
+    <table id="numBtns">
+      <thead>
+        <tr>
+          <th colspan="4" id="calculatorDisplay" class="calculatorDisplay">0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <button id="modBtn" class="btn" onclick="inputOperator('%')">
+              %
+            </button>
+          </td>
+          <td>
+            <button id="CEBtn" class="btn" onclick="clearCurrent()">
+              CE
+            </button>
+          </td>
+          <td>
+            <button id="CBtn" class="btn" onclick="clearAll()">
+              C
+            </button>
+          </td>
+          <td>
+            <button id="delBtn" class="btn" onclick="backspace()">
+              DEL
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="fragBtn" class="btn" onclick="frag()">
+              1/x
+            </button>
+          </td>
+          <td>
+            <button id="squareBtn" class="btn" onclick="square()">
+              x<sup>2</sup>
+            </button>
+          </td>
+          <td>
+            <button id="squareRootBtn" class="btn" onclick="squareRoot()">
+              Sqrt
+            </button>
+          </td>
+          <td>
+            <button id="divideBtn" class="btn" onclick="inputOperator('/')">
+              &divide;
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="7Btn" class="btn" onclick="inputNumber('7')">
+              7
+            </button>
+          </td>
+          <td>
+            <button id="8Btn" class="btn" onclick="inputNumber('8')">
+              8
+            </button>
+          </td>
+          <td>
+            <button id="9Btn" class="btn" onclick="inputNumber('9')">
+              9
+            </button>
+          </td>
+          <td>
+            <button id="multiplyBtn" class="btn" onclick="inputOperator('*')">
+              &times;
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="4Btn" class="btn" onclick="inputNumber('4')">
+              4
+            </button>
+          </td>
+          <td>
+            <button id="5Btn" class="btn" onclick="inputNumber('5')">
+              5
+            </button>
+          </td>
+          <td>
+            <button id="6Btn" class="btn" onclick="inputNumber('6')">
+              6
+            </button>
+          </td>
+          <td>
+            <button id="substractBtn" class="btn" onclick="inputOperator('-')">
+              -
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="1Btn" class="btn" onclick="inputNumber('1')">
+              1
+            </button>
+          </td>
+          <td>
+            <button id="2Btn" class="btn" onclick="inputNumber('2')">
+              2
+            </button>
+          </td>
+          <td>
+            <button id="3Btn" class="btn" onclick="inputNumber('3')">
+              3
+            </button>
+          </td>
+          <td>
+            <button id="addBtn" class="btn" onclick="inputOperator('+')">
+              +
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button id="signBtn" class="btn" onclick="sign()">
+              +/-
+            </button>
+          </td>
+          <td>
+            <button id="0Btn" class="btn" onclick="inputNumber('0')">
+              0
+            </button>
+          </td>
+          <td>
+            <button id="dotBtn" class="btn" onclick="inputNumber('.')">
+              .
+            </button>
+          </td>
+          <td>
+            <button id="equalBtn" class="btn" onclick="calculateEqual()">
+              =
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    let stack = Array()
+    let cache = '0';
+    let operator = 'none';
+    let opFlag = false;
+    let isResult = false;
+    let errorMessage = Array('Divisor could not be 0.', 'Invalid input.');
+
+    function lock() {
+      document.getElementById("equalBtn").disabled = true;
+      document.getElementById("delBtn").disabled = true;
+      document.getElementById("addBtn").disabled = true;
+      document.getElementById("substractBtn").disabled = true;
+      document.getElementById("multiplyBtn").disabled = true;
+      document.getElementById("divideBtn").disabled = true;
+      document.getElementById("dotBtn").disabled = true;
+      document.getElementById("signBtn").disabled = true;
+      document.getElementById("modBtn").disabled = true;
+      document.getElementById("fragBtn").disabled = true;
+      document.getElementById("squareBtn").disabled = true;
+      document.getElementById("squareRootBtn").disabled = true;
+    }
+    function unlock() {
+      document.getElementById("equalBtn").disabled = false;
+      document.getElementById("delBtn").disabled = false;
+      document.getElementById("addBtn").disabled = false;
+      document.getElementById("substractBtn").disabled = false;
+      document.getElementById("multiplyBtn").disabled = false;
+      document.getElementById("divideBtn").disabled = false;
+      document.getElementById("dotBtn").disabled = false;
+      document.getElementById("signBtn").disabled = false;
+      document.getElementById("modBtn").disabled = false;
+      document.getElementById("fragBtn").disabled = false;
+      document.getElementById("squareBtn").disabled = false;
+      document.getElementById("squareRootBtn").disabled = false;
+    }
+    function sign(){
+      if (cache[0] === '-') {
+        cache = cache.slice(1, cache.length);
+      } else {
+        cache = "-" + cache;
+      }
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function squareRoot(){
+      let num = eval(cache);
+      if (num > 0) {
+        cache = (Math.sqrt(num)).toString();
+      } else {
+        cache = errorMessage[1];
+        lock();
+      }
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function square(){
+      let num = eval(cache);
+      cache = (num*num).toString();
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function frag(){
+      let num = eval(cache);
+      if (num !== 0) {
+        cache = (1/num).toString();
+      } else {
+        cache = errorMessage[0];
+        lock();
+      }
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function backspace(){
+      if (cache.length > 1) {
+        cache=cache.slice(0,cache.length-1);
+      } else {
+        cache = '0';
+      }
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function clearAll(){
+      cache = '0';
+      stack = Array();
+      operator = 'none';
+      opFlag = false;
+      isResult = false;
+      unlock();
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function clearCurrent(){
+      cache = '0';
+      unlock();
+      document.getElementById("calculatorDisplay").innerText = cache
+    }
+    function inputNumber(num){
+      if (cache === '0' || isResult && !errorMessage.includes(cache)) {
+        cache = num;
+        isResult = false;
+      } else if (errorMessage.includes(cache)){
+        clearAll();
+        inputNumber(num);
+      } else {
+        cache += num;
+      }
+      if (operator !== 'none') {
+        opFlag = true;
+      }
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+    function calculateEqual(){
+      if (stack.length > 0 && operator !== 'none') {
+        calculate(operator, stack.pop(), cache);
+      } else {
+        isResult = true;
+      }
+    }
+    function inputOperator(op){
+      if (stack.length > 0 && operator !== 'none' && opFlag){
+        calculate(operator, stack.pop(), cache);
+        operator = op;
+        stack.push(cache);
+      } else if (stack.length === 0 && operator === 'none'){
+        operator = op;
+        stack.push(cache);
+        cache = '0';
+        document.getElementById("calculatorDisplay").innerText = cache;
+      } else {
+        operator = op;
+      }
+    }
+    function calculate(op, num1, num2){
+      num1 = eval(num1);
+      num2 = eval(num2);
+      if (op === '+'){
+        cache = (num1 + num2).toString();
+      } else if (op === '-') {
+        cache = (num1 - num2).toString();
+      } else if (op === '*'){
+        cache = (num1 * num2).toString();
+      } else if (op === '/'){
+        if (num2 === 0){
+          cache = errorMessage[0];
+          lock();
+        } else {
+          cache = (num1 / num2).toString();
+        }
+      } else if (op === '%'){
+        cache = (num1 % num2).toString();
+      }
+      isResult = true;
+      operator = 'none';
+      document.getElementById("calculatorDisplay").innerText = cache;
+    }
+  </script>
+</body>
+</html>
